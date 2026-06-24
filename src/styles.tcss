@@ -1,0 +1,74 @@
+/* ── Global transparency — every layer passes through to Ghostty ── */
+Terminal {
+    background: ansi_default;
+}
+
+Screen {
+    background: ansi_default;
+}
+
+Widget, Grid, Horizontal, Vertical, ScrollableContainer {
+    background: ansi_default;
+}
+
+Static {
+    background: ansi_default;
+}
+
+Input {
+    background: ansi_default;
+}
+
+FinanceTerminal {
+    background: ansi_default;
+}
+
+/* ── Main dashboard grid ── */
+#terminal-grid {
+    layout: grid;
+    grid-size: 2 5;
+    grid-columns: 1fr 1fr;
+    grid-rows: 3 1fr 1fr 2 3;
+    height: 100%;
+    background: ansi_default;
+    color: #89CFF0;
+}
+
+#header-bar {
+    column-span: 2;
+    height: 3;
+    border: double #89CFF0;
+    content-align: center middle;
+    text-style: bold;
+    text-align: center;
+    background: ansi_default;
+}
+
+#price-chart, #market-overview, #watchlist, #news-feed {
+    border: tall #89CFF0;
+    padding: 1;
+    height: 100%;
+    overflow-y: auto;
+    text-align: left;
+    background: ansi_default;
+}
+
+#status-bar {
+    column-span: 2;
+    height: 2;
+    border-top: solid #1B3F5C;
+    padding: 0 1;
+    content-align: left middle;
+    color: #5BAFD6;
+    text-align: left;
+    background: ansi_default;
+}
+
+#command-bar {
+    column-span: 2;
+    height: 3;
+    border-top: double #89CFF0;
+    content-align: left middle;
+    padding-left: 1;
+    background: ansi_default;
+}
