@@ -6,7 +6,7 @@ Currently, data is sourced from two main libraries: yfinance for real-time and h
 
 ## Setup 
 
-**Recommend**: Use a virtual environment before any installations
+**Recommend**: Using a python virtual environment before any installations and the use of any terminal emulator that supports rich-text rendering (eg. Ghostty)
 
 Install required libraries via pip:
 
