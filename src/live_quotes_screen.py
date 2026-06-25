@@ -3,9 +3,9 @@ Live Quotes Screen — intraday price chart with periodic refresh.
 
 Behaviour
 ---------
-• Market OPEN  ("REGULAR") → loads today's full 5-min candles (09:30 → now ET)
+- Market OPEN  ("REGULAR") -> loads today's full 5-min candles (09:30 -> now ET)
   and auto-refreshes every 5 minutes via set_interval.
-• Market CLOSED (any other state) → loads the previous trading-day's 1-h candles
+- Market CLOSED (any other state) -> loads the previous trading-day's 1-h candles
   and shows a static chart (no auto-refresh).
 
 Commands (inside the screen)
@@ -37,7 +37,7 @@ from price import TickerHistoryFetcher
 
 _ET = ZoneInfo("America/New_York")
 _MARKET_OPEN  = "09:30"   # zero-padded HH:MM for safe string compare
-_MARKET_CLOSE = "16:30"
+_MARKET_CLOSE = "16:00"
 
 REFRESH_INTERVAL = 300     # seconds between auto-refreshes (5 min)
 SERIES_COLORS    = ["green", "cyan", "yellow", "magenta", "red", "blue"]
@@ -79,10 +79,14 @@ def _fetch_history(symbol: str, period: str, interval: str) -> pd.DataFrame:
 
 def _prev_trading_day_data(symbol: str) -> pd.DataFrame:
     """1-h candles for the most recent complete trading day."""
-    df = _fetch_history(symbol, period="5d", interval="1h")
+    df = _fetch_history(symbol, period="5d", interval="1m")
     if df.empty or "datetime" not in df.columns:
         return df
     last_date = df["datetime"].dt.date.max()
+    start_time = pd.to_datetime('09:30:00').time()
+    end_time = pd.to_datetime('16:00:00').time()
+    
+    df = df[df['datetime'].dt.time.between(start_time, end_time)]
     return df[df["datetime"].dt.date == last_date].reset_index(drop=True)
 
 
@@ -169,7 +173,7 @@ class PlotextChart(Widget):
         plt.plotsize(w, h - 1)
         plt.title("   │   ".join(title_parts))
         plt.ylabel("Price ($)")
-        plt.date_form("H:M")
+        # plt.date_form("H:M")
 
         any_plotted = False
         for idx, (sym, data) in enumerate(active.items()):
@@ -178,7 +182,7 @@ class PlotextChart(Widget):
             times:  list[str]   = []
             prices: list[float] = []
             for ts, price in data:
-                times.append(ts.strftime("%H:%M") if hasattr(ts, "strftime") else str(len(times)))
+                times.append(ts.strftime("%I:%M %p") if hasattr(ts, "strftime") else str(len(times)))
                 prices.append(price)
             if not times:
                 continue
@@ -190,8 +194,10 @@ class PlotextChart(Widget):
             if not is_live and times[-1] < _MARKET_CLOSE:
                 times  = times  + [_MARKET_CLOSE]
                 prices = prices + [prices[-1]]
+            indices = list(range(len(times)))
+            plt.xticks(indices, times)
 
-            plt.plot(times, prices, label=sym, color=SERIES_COLORS[idx % len(SERIES_COLORS)])
+            plt.plot(indices, prices, label=sym, color=SERIES_COLORS[idx % len(SERIES_COLORS)])
             any_plotted = True
 
         if not any_plotted:
@@ -199,6 +205,7 @@ class PlotextChart(Widget):
 
         chart_text = Text.from_ansi(plt.build())
         chart_text.append(f"\n[{self._mode}]", style="dim")
+
         return chart_text
 
 
@@ -337,7 +344,7 @@ class LiveQuotesScreen(Screen):
             if not self._alive:
                 return
             df = (
-                _fetch_history(sym, period="1d", interval="5m")
+                _fetch_history(sym, period="1d", interval="1m")
                 if self._market_open
                 else _prev_trading_day_data(sym)
             )
@@ -368,7 +375,7 @@ class LiveQuotesScreen(Screen):
         if not self._alive:
             return
         df = (
-            _fetch_history(sym, period="1d", interval="5m")
+            _fetch_history(sym, period="1d", interval="1m")
             if self._market_open
             else _prev_trading_day_data(sym)
         )
