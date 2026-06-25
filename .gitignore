@@ -1,5 +1,5 @@
 .venv
 .DS_Store
-./src/.DS_Store
-./src/__pycache__/
-./src/notebooks/
+/src/.DS_Store
+/src/__pycache__/
+/src/notebooks/
