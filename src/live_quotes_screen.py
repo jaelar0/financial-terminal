@@ -3,9 +3,9 @@ Live Quotes Screen — intraday price chart with periodic refresh.
 
 Behaviour
 ---------
-• Market OPEN  ("REGULAR") → loads today's full 5-min candles (09:30 → now ET)
+- Market OPEN  ("REGULAR") -> loads today's full 5-min candles (09:30 -> now ET)
   and auto-refreshes every 5 minutes via set_interval.
-• Market CLOSED (any other state) → loads the previous trading-day's 1-h candles
+- Market CLOSED (any other state) -> loads the previous trading-day's 1-h candles
   and shows a static chart (no auto-refresh).
 
 Commands (inside the screen)
